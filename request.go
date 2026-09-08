@@ -12,7 +12,7 @@ import (
 // do executes one Stridge HTTP request and handles behavior shared by all
 // endpoints. Endpoint methods remain responsible for constructing their URL
 // and choosing their request and response models.
-func (c *Client) do(ctx context.Context, method, requestURL string, body, out any) error {
+func (c *Client) do(ctx context.Context, method, requestURL string, headers http.Header, body, out any) error {
 	var requestBody io.Reader
 	if body != nil {
 		encodedBody, err := json.Marshal(body)
@@ -30,6 +30,11 @@ func (c *Client) do(ctx context.Context, method, requestURL string, body, out an
 	request.Header.Set("Accept", "application/json")
 	if body != nil {
 		request.Header.Set("Content-Type", "application/json")
+	}
+	for name, values := range headers {
+		for _, value := range values {
+			request.Header.Add(name, value)
+		}
 	}
 
 	response, err := c.httpClient.Do(request) //this is a network call and the error corresponds to the network

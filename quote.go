@@ -25,7 +25,7 @@ func (c *Client) Quote(ctx context.Context, req QuoteRequest) (*Quote, error) {
 	endpointURL.RawQuery = query.Encode()
 
 	var quote Quote
-	if err := c.do(ctx, http.MethodGet, endpointURL.String(), nil, &quote); err != nil {
+	if err := c.do(ctx, http.MethodGet, endpointURL.String(), nil, nil, &quote); err != nil {
 		return nil, err
 	}
 

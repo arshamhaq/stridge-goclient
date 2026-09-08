@@ -275,9 +275,11 @@ func TestQuoteReturnsTransportError(t *testing.T) {
 
 func TestQuoteHonorsContextCancellation(t *testing.T) {
 	requestStarted := make(chan struct{})
+	releaseHandler := make(chan struct{})
+	defer close(releaseHandler)
 	client := newQuoteTestClient(t, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		close(requestStarted)
-		<-r.Context().Done()
+		<-releaseHandler
 	}))
 
 	ctx, cancel := context.WithCancel(context.Background())
